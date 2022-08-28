@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    triggers {
+        pollSCM('*/1 * * * *')
+    }
+    stages {
+        stage('build-app') {
+            echo "Build app"
+        }
+        stage('deploy-dev') {
+            echo "Deployment of hello-app to DEV"
+        }
+        stage('test-dev') {
+            echo "Testing of hello-app to DEV"
+        }
+        stage('deploy-prd') {
+            echo "Deployment of hello-app to PRD"
+        }
+        stage('test-prd') {
+            echo "Testing of hello-app to PRD"
+        }
+    }
+}
