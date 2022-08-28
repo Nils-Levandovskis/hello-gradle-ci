@@ -34,7 +34,7 @@ pipelines:
                   command: bash
                   arguments:
                     - -c
-                    - docker build -t nilsleva/hello-app:latest ."
+                    - docker build -t nilsleva/hello-app:latest .
               - exec:
                   command: bash
                   arguments:
