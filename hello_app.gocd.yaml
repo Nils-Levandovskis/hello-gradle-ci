@@ -3,14 +3,14 @@ format_version: 10
 common:
   deploy-tasks: &deploy-tasks
     - exec:
-      command: echo
-      arguments:
-        - "Deployment of hello-app on ${ENV_NAME} is starting.."
+        command: echo
+        arguments:
+          - "Deployment of hello-app on ${ENV_NAME} is starting.."
   test-tasks: &test-tasks
     - exec:
-      command: echo
-      arguments:
-        - "Testing of hello-app on ${ENV_NAME} is starting.."
+        command: echo
+        arguments:
+          - "Testing of hello-app on ${ENV_NAME} is starting.."
 
 pipelines:
   hello-app:
@@ -30,7 +30,7 @@ pipelines:
                     - "Building hello-app"
       - deploy-dev:
           environment-variables:
-            ENV_NAME: dev
+              ENV_NAME: dev
           jobs:
             deploy-dev:
               tasks: *deploy-tasks
@@ -42,14 +42,14 @@ pipelines:
               tasks: *test-tasks
       - deploy-prd:
           environment-variables:
-                ENV_NAME: prd
+              ENV_NAME: prd
           jobs:
-            deploy-dev:
-              tasks:
-              - exec: *deploy-tasks
+              deploy-dev:
+                tasks:
+                - exec: *deploy-tasks
       - test-prd:
           environment-variables:
-                ENV_NAME: prd
+              ENV_NAME: prd
           jobs:
-            test-dev:
-              tasks: *test-tasks
+              test-dev:
+                  tasks: *test-tasks
