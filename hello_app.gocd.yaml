@@ -5,13 +5,13 @@ common:
     - exec:
         command: bash
         arguments:
-          - c
+          - -c
           - echo "Deployment of hello-app on ${ENV_NAME} is starting.."
   test-tasks: &test-tasks
     - exec:
         command: echo
         arguments:
-          - c
+          - -c
           - echo "Testing of hello-app on ${ENV_NAME} is starting.."
 
 pipelines:
@@ -33,13 +33,13 @@ pipelines:
               - exec:
                   command: bash
                   arguments:
-                    - c
+                    - -c
                     - docker build -t nilsleva/hello-app:latest ."
               - exec:
                   command: bash
                   arguments:
-                  - -c
-                  - docker push nilsleva/hello-app:latest
+                    - -c
+                    - docker push nilsleva/hello-app:latest
       - deploy-dev:
           environment-variables:
               ENV_NAME: dev
