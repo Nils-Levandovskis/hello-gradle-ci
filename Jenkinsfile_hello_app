@@ -26,14 +26,14 @@ pipeline {
         stage('deploy-prd') {
             steps {
                 script {
-                    deploy("DEV")
+                    deploy("PRD")
                 }            
             }
         }
         stage('test-prd') {
             steps {
                 script {
-                    test("DEV")
+                    test("PRD")
                 }            
             }
         }
