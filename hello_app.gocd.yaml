@@ -45,8 +45,7 @@ pipelines:
               ENV_NAME: prd
           jobs:
               deploy-dev:
-                tasks:
-                - exec: *deploy-tasks
+                tasks: *deploy-tasks
       - test-prd:
           environment-variables:
               ENV_NAME: prd
