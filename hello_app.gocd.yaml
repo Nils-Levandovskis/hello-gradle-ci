@@ -11,7 +11,7 @@ common:
         command: bash
         arguments:
           - -c
-          - kubectl set image deployment hello-app-$ENV_NAME hello-app-$ENV_NAME-pod=Nils-Levandovskis/hello-app:latest
+          - kubectl set image deployment hello-app-$ENV_NAME hello-app-$ENV_NAME-pod=nilsleva/hello-app:latest
   test-tasks: &test-tasks
     - exec:
         command: bash
@@ -22,7 +22,7 @@ common:
         command: bash
         arguments:
           - -c
-          - docker run --network=host -d -t --name api_test_executor_$ENV_NAME Nils-Levandovskis/ubuntu_ruby_executor:latest
+          - docker run --network=host -d -t --name api_test_executor_$ENV_NAME nilsleva/ubuntu_ruby_executor:latest
     - exec:
         command: bash
         arguments:
@@ -59,12 +59,12 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker build -t Nils-Levandovskis/hello-app:latest .
+                      - docker build -t nilsleva/hello-app:latest .
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker push Nils-Levandovskis/hello-app:latest
+                      - docker push nilsleva/hello-app:latest
       - deploy-dev:
           environment_variables:
             ENV_NAME: dev
