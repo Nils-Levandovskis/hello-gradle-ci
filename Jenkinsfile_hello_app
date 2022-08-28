@@ -3,12 +3,15 @@ pipeline {
     triggers {
         pollSCM('*/1 * * * *')
     }
+    parameters{
+        string(name: 'VERSION', defaultValue: "${GIT_COMMIT}", description: 'Git commit sha for docker versioning')
+    }
     stages {
         stage('build-app') {
             steps {
-                echo "Build app ${GIT_COMMIT}"
-                sh "docker build -t nilsleva/hello-app:${GIT_COMMIT} ."
-                sh "docker push nilsleva/hello-app:${GIT_COMMIT}"
+                echo "Build app git v: ${params.VERSION} commit sha: ${GIT_COMMIT}"
+                sh "docker build -t nilsleva/hello-app:${params.VERSION} ."
+                sh "docker push nilsleva/hello-app:${params.VERSION}"
             }
         }
         stage('deploy-dev') {
@@ -44,12 +47,12 @@ pipeline {
 
 def deploy(String environment) {
     echo "Deployment of hello-app to ${environment}"
-    sh "kubectl set image deployment hello-app-${environment} hello-app-${environment}-pod=nilsleva/hello-app:${GIT_COMMIT}"
+    sh "kubectl set image deployment hello-app-${environment} hello-app-${environment}-pod=nilsleva/hello-app:${params.VERSION}"
 }
 
 def test(String environment) {
     echo "Testing of hello-app to ${environment}"
-    sh "docker run --network=host -d -t --name api_test_executor_${environment} nilsleva/ubuntu_ruby_executor:${GIT_COMMIT}"
+    sh "docker run --network=host -d -t --name api_test_executor_${environment} nilsleva/ubuntu_ruby_executor:${params.VERSION}"
     try {
         sh "docker exec api_test_executor_${environment} cucumber PLATFORM=${environment} --format html --out test-output/report.html"
     } finally {
