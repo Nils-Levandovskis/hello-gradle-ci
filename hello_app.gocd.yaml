@@ -6,13 +6,38 @@ common:
         command: bash
         arguments:
           - -c
-          - echo "Deployment of hello-app on ${ENV_NAME} is starting.."
-  test-tasks: &test-tasks
+          - echo "Deployment of hello-app on $ENV_NAME is starting.."
     - exec:
-        command: echo
+        command: bash
         arguments:
           - -c
-          - echo "Testing of hello-app on ${ENV_NAME} is starting.."
+          - kubectl set image deployment hello-app-$ENV_NAME hello-app-$ENV_NAME-pod=Nils-Levandovskis/hello-app:latest
+  test-tasks: &test-tasks
+    - exec:
+        command: bash
+        arguments:
+          - -c
+          - echo "Testing of hello-app on $ENV_NAME is starting.."
+    - exec:
+        command: bash
+        arguments:
+          - -c
+          - docker run --network=host -d -t --name api_test_executor_$ENV_NAME Nils-Levandovskis/ubuntu_ruby_executor:latest
+    - exec:
+        command: bash
+        arguments:
+          - -c
+          - docker exec api_test_executor_$ENV_NAME cucumber PLATFORM=$ENV_NAME --format html --out test-output/report.html
+    - exec:
+        command: bash
+        arguments:
+          - -c
+          - docker cp api_test_executor_$ENV_NAME:/usr/src/api-tests/test-output/report.html report_$ENV_NAME.html
+    - exec:
+        command: bash
+        arguments:
+          - -c
+          - docker rm -f api_test_executor_$ENV_NAME
 
 pipelines:
   hello-app:
@@ -26,41 +51,41 @@ pipelines:
           jobs:
             build-app:
               tasks:
-              - exec:
-                  command: echo
-                  arguments:
-                    - "Building hello-app"
-              - exec:
-                  command: bash
-                  arguments:
-                    - -c
-                    - docker build -t nilsleva/hello-app:latest .
-              - exec:
-                  command: bash
-                  arguments:
-                    - -c
-                    - docker push nilsleva/hello-app:latest
+                - exec:
+                    command: echo
+                    arguments:
+                      - "Building hello-app..."
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker build -t Nils-Levandovskis/hello-app:latest .
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker push Nils-Levandovskis/hello-app:latest
       - deploy-dev:
-          environment-variables:
-              ENV_NAME: dev
+          environment_variables:
+            ENV_NAME: dev
           jobs:
             deploy-dev:
               tasks: *deploy-tasks
       - test-dev:
-          environment-variables:
-                ENV_NAME: dev
+          environment_variables:
+            ENV_NAME: dev
           jobs:
             test-dev:
               tasks: *test-tasks
       - deploy-prd:
-          environment-variables:
-              ENV_NAME: prd
+          environment_variables:
+            ENV_NAME: prd
           jobs:
-              deploy-dev:
-                tasks: *deploy-tasks
+            deploy-dev:
+              tasks: *deploy-tasks
       - test-prd:
-          environment-variables:
-              ENV_NAME: prd
+          environment_variables:
+            ENV_NAME: prd
           jobs:
-              test-dev:
-                  tasks: *test-tasks
+            test-dev:
+              tasks: *test-tasks
