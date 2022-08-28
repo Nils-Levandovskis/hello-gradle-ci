@@ -7,6 +7,8 @@ pipeline {
         stage('build-app') {
             steps {
                 echo "Build app"
+                sh "docker build -t nilsleva/hello-app:latest ."
+                sh "docker push nilsleva/hello-app:latest"
             }
         }
         stage('deploy-dev') {
