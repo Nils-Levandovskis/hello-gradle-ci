@@ -1,0 +1,19 @@
+---
+
+format_version: 10
+pipelines:
+  hello-app:
+  group: java-spring-app
+  materials:
+    git: https://github.com/Nils-Levandovskis/hello-gradle-ci.git
+    branch: main
+
+  stages:
+    - build:
+        jobs:
+          build-app:
+            tasks:
+            - exec:
+                command: echo
+                arguments:
+                  - "Building hello-app"
